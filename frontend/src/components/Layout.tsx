@@ -9,7 +9,14 @@ function getInitialDarkMode(): boolean {
   return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
-const navSections = [
+interface NavItem {
+  to: string
+  icon: string
+  label: string
+  external?: boolean
+}
+
+const navSections: { title?: string; items: NavItem[] }[] = [
   {
     items: [
       { to: "/", icon: "More_Grid_Big", label: "Dashboard" },
