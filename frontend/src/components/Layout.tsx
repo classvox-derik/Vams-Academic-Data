@@ -61,23 +61,23 @@ export function Layout() {
 
       {/* Sidebar */}
       <nav className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-menu-bg text-menu-text transition-transform duration-300 ease-in-out md:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-menu-bg text-menu-text transition-transform duration-300 ease-in-out md:translate-x-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="px-5 py-5">
+        <div className="shrink-0 px-5 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <img src="/logo.png" alt="Valor Academy Middle School" className="h-auto w-full max-w-[140px] sm:max-w-[160px]" />
+            <img src="/logo.png" alt="Valor Academy Middle School" className="h-auto w-full max-w-[120px] md:max-w-[140px]" />
             <button className="md:hidden rounded-lg p-1 text-menu-text/50 hover:bg-menu-text/5 hover:text-menu-text transition-colors" onClick={() => setSidebarOpen(false)}>
               <CoolIcon name="Close_MD" size={18} />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 px-3 py-2">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-1">
           {navSections.map((section, si) => (
-            <div key={si} className={si > 0 ? "mt-2" : ""}>
+            <div key={si} className={si > 0 ? "mt-1" : ""}>
               {section.title && (
-                <div className="px-3 pb-1.5 pt-4 text-[0.6rem] font-semibold uppercase tracking-widest text-menu-text/40">
+                <div className="px-3 pb-1 pt-2 md:pt-3 text-[0.6rem] font-semibold uppercase tracking-widest text-menu-text/40">
                   {section.title}
                 </div>
               )}
@@ -88,13 +88,13 @@ export function Layout() {
                   end={item.to === "/"}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) => cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[0.85rem] transition-all duration-200",
+                    "flex items-center gap-2.5 rounded-lg px-3 py-2 md:py-2.5 text-[0.82rem] md:text-[0.85rem] transition-all duration-200",
                     isActive
                       ? "bg-menu-text/10 font-medium text-menu-text shadow-sm"
                       : "text-menu-text/60 hover:bg-menu-text/5 hover:text-menu-text"
                   )}
                 >
-                  <CoolIcon name={item.icon} size={18} />
+                  <CoolIcon name={item.icon} size={17} />
                   {item.label}
                 </NavLink>
               ))}
