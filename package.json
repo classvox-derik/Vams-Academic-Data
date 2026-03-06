@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "server": "tsx server/index.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run dev:frontend\""
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5",
+    "openai": "^4.78.0",
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "concurrently": "^9.1.0",
+    "@vercel/node": "^3.0.0"
+  }
+}

@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Brand accent colors (static across themes) */
+  --color-navy: #264653;
+  --color-navy-light: #2d5468;
+  --color-navy-dark: #1a3340;
+  --color-teal: #2A9D8F;
+  --color-teal-light: #35b8a8;
+  --color-gold: #E9C46A;
+  --color-gold-light: #f0d48a;
+  --color-orange: #F4A261;
+  --color-orange-light: #f7b882;
+  --color-coral: #E76F51;
+  --color-coral-light: #ed8e76;
+
+  /* Semantic colors (theme-aware via CSS variables) */
+  --color-surface: var(--theme-surface);
+  --color-card: var(--theme-card);
+  --color-heading: var(--theme-heading);
+  --color-secondary: var(--theme-secondary);
+  --color-muted: var(--theme-muted);
+  --color-border: var(--theme-border);
+  --color-border-light: var(--theme-border-light);
+  --color-input: var(--theme-input);
+  --color-tab: var(--theme-tab);
+  --color-stripe: var(--theme-stripe);
+  --color-menu-bg: var(--theme-menu-bg);
+  --color-menu-text: var(--theme-menu-text);
+
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+}
+
+/* Light theme (default) */
+:root {
+  --theme-surface: #F5F6FA;
+  --theme-card: #ffffff;
+  --theme-heading: #264653;
+  --theme-secondary: #6b7280;
+  --theme-muted: #9ca3af;
+  --theme-border: #e5e7eb;
+  --theme-border-light: #f3f4f6;
+  --theme-input: #ffffff;
+  --theme-tab: #f3f4f6;
+  --theme-stripe: rgba(249, 250, 251, 0.6);
+  --theme-menu-bg: #ede0d4;
+  --theme-menu-text: #233d4d;
+  --theme-body-color: #1f2937;
+  --theme-scrollbar: #d1d5db;
+  --theme-scrollbar-hover: #9ca3af;
+  --theme-header-input-bg: rgba(255, 255, 255, 0.6);
+  --theme-header-input-bg-focus: #ffffff;
+}
+
+/* Dark theme */
+.dark {
+  --theme-surface: #111827;
+  --theme-card: #1f2937;
+  --theme-heading: #e2e8f0;
+  --theme-secondary: #9ca3af;
+  --theme-muted: #6b7280;
+  --theme-border: #374151;
+  --theme-border-light: #1f2937;
+  --theme-input: #1f2937;
+  --theme-tab: #374151;
+  --theme-stripe: rgba(31, 41, 59, 0.5);
+  --theme-menu-bg: #1a1f2e;
+  --theme-menu-text: #cbd5e1;
+  --theme-body-color: #e5e7eb;
+  --theme-scrollbar: #4b5563;
+  --theme-scrollbar-hover: #6b7280;
+  --theme-header-input-bg: rgba(255, 255, 255, 0.08);
+  --theme-header-input-bg-focus: rgba(255, 255, 255, 0.12);
+}
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-surface);
+  color: var(--theme-body-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-scrollbar);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-scrollbar-hover);
+}
+
+/* Hide scrollbar but keep scrollability */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
