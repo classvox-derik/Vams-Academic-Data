@@ -39,6 +39,7 @@ const navSections = [
     items: [
       { to: "/gpas", icon: "Star", label: "GPA Tracking" },
       { to: "/interventions", icon: "Heart_01", label: "Interventions" },
+      { to: "https://www.vamseld.com", icon: "Chat_Circle", label: "English Language Dev", external: true },
     ],
   },
 ]
@@ -82,21 +83,36 @@ export function Layout() {
                 </div>
               )}
               {section.items.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === "/"}
-                  onClick={() => setSidebarOpen(false)}
-                  className={({ isActive }) => cn(
-                    "flex items-center gap-2.5 rounded-lg px-3 py-2 md:py-2.5 text-[0.82rem] md:text-[0.85rem] transition-all duration-200",
-                    isActive
-                      ? "bg-menu-text/10 font-medium text-menu-text shadow-sm"
-                      : "text-menu-text/60 hover:bg-menu-text/5 hover:text-menu-text"
-                  )}
-                >
-                  <CoolIcon name={item.icon} size={17} />
-                  {item.label}
-                </NavLink>
+                item.external ? (
+                  <a
+                    key={item.to}
+                    href={item.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setSidebarOpen(false)}
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 md:py-2.5 text-[0.82rem] md:text-[0.85rem] transition-all duration-200 text-menu-text/60 hover:bg-menu-text/5 hover:text-menu-text"
+                  >
+                    <CoolIcon name={item.icon} size={17} />
+                    {item.label}
+                    <CoolIcon name="External_Link" size={12} className="ml-auto opacity-40" />
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === "/"}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) => cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 md:py-2.5 text-[0.82rem] md:text-[0.85rem] transition-all duration-200",
+                      isActive
+                        ? "bg-menu-text/10 font-medium text-menu-text shadow-sm"
+                        : "text-menu-text/60 hover:bg-menu-text/5 hover:text-menu-text"
+                    )}
+                  >
+                    <CoolIcon name={item.icon} size={17} />
+                    {item.label}
+                  </NavLink>
+                )
               ))}
             </div>
           ))}
