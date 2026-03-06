@@ -46,7 +46,7 @@ const navSections: { title?: string; items: NavItem[] }[] = [
     items: [
       { to: "/gpas", icon: "Star", label: "GPA Tracking" },
       { to: "/interventions", icon: "Heart_01", label: "Interventions" },
-      { to: "https://www.vamseld.com", icon: "Chat_Circle", label: "English Language Dev", external: true },
+      { to: "https://www.vamseld.com", icon: "Chat_Circle", label: "ELD", external: true },
     ],
   },
 ]
