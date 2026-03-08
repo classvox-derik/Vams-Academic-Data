@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { useData } from "@/data/useData"
 import { useAnalysis } from "@/data/useAnalysis"
@@ -8,6 +8,7 @@ import { KpiCard } from "@/components/ui/KpiCard"
 import { CoolIcon } from "@/components/ui/CoolIcon"
 import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer"
 import { cn, formatName } from "@/lib/utils"
+import { useLibrary } from "@/data/useLibrary"
 
 function cleanAnalysis(text: string): string {
   // Strip generic intro lines like "Here's an analysis of [name]'s academic data..."
@@ -36,6 +37,8 @@ export function StudentAnalysis() {
   const { studentId } = useParams<{ studentId: string }>()
   const { data, loading: dataLoading } = useData()
   const { result, loading: analyzing, error, analyze, retry } = useAnalysis()
+  const { saveAnalysis, saving } = useLibrary()
+  const [saved, setSaved] = useState(false)
 
   const profile = useMemo(() => {
     if (dataLoading || !studentId) return null
@@ -191,16 +194,39 @@ export function StudentAnalysis() {
               <span className="text-xs text-muted">
                 Tokens: {result.usage.input_tokens} in / {result.usage.output_tokens} out
               </span>
-              <button
-                onClick={() => analyze(profile)}
-                disabled={analyzing}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-colors",
-                  "bg-teal hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                )}
-              >
-                Re-analyze
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={async () => {
+                    await saveAnalysis({
+                      student_name: profile.studentName,
+                      student_id: profile.studentId,
+                      grade_level: profile.gradeLevel,
+                      analysis_text: result.analysis,
+                      model: result.model,
+                    })
+                    setSaved(true)
+                  }}
+                  disabled={saving || saved}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                    saved
+                      ? "bg-teal/10 text-teal cursor-default"
+                      : "bg-navy text-white hover:bg-navy/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  )}
+                >
+                  {saving ? "Saving..." : saved ? "Saved" : "Save to Library"}
+                </button>
+                <button
+                  onClick={() => { analyze(profile); setSaved(false) }}
+                  disabled={analyzing}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-colors",
+                    "bg-teal hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  )}
+                >
+                  Re-analyze
+                </button>
+              </div>
             </div>
           </CardContent>
         </Card>

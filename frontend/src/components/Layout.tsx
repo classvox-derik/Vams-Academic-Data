@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { NavLink, Outlet } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { CoolIcon } from "@/components/ui/CoolIcon"
+import { useAuth } from "@/data/useAuth"
+import { Footer } from "@/components/Footer"
 
 function getInitialDarkMode(): boolean {
   const stored = localStorage.getItem("darkMode")
@@ -49,11 +51,19 @@ const navSections: { title?: string; items: NavItem[] }[] = [
       { to: "https://www.vamseld.com", icon: "Chat_Circle", label: "ELD", external: true },
     ],
   },
+  {
+    title: "Tools",
+    items: [
+      { to: "/library", icon: "Folder_Open", label: "Saved Analyses" },
+    ],
+  },
 ]
 
 export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(getInitialDarkMode)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { user, signOut } = useAuth()
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode)
@@ -150,12 +160,47 @@ export function Layout() {
           >
             <CoolIcon name={darkMode ? "Sun" : "Moon"} size={18} />
           </button>
+
+          {/* User menu */}
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex h-9 items-center gap-2 rounded-xl border border-menu-text/10 px-3 text-menu-text/60 transition-all hover:text-menu-text hover:shadow-sm"
+              style={{ background: "var(--theme-header-input-bg)" }}
+            >
+              <CoolIcon name="User_Circle" size={18} />
+              <span className="hidden sm:inline text-xs truncate max-w-[120px]">
+                {user?.email?.split("@")[0]}
+              </span>
+              <CoolIcon name="Chevron_Down" size={12} />
+            </button>
+
+            {userMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 w-48 rounded-lg bg-card border border-border shadow-lg py-1">
+                  <div className="px-3 py-2 text-xs text-muted border-b border-border-light truncate">
+                    {user?.email}
+                  </div>
+                  <button
+                    onClick={async () => { await signOut(); setUserMenuOpen(false) }}
+                    className="w-full text-left px-3 py-2 text-sm text-secondary hover:bg-surface transition-colors flex items-center gap-2"
+                  >
+                    <CoolIcon name="Log_Out" size={14} />
+                    Sign Out
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </header>
 
         {/* Page content */}
         <main className="flex-1 p-3 sm:p-6 max-w-[1600px] w-full overflow-x-auto">
           <Outlet />
         </main>
+
+        <Footer />
       </div>
     </div>
   )
