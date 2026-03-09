@@ -2,10 +2,9 @@ import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card"
 import { CoolIcon } from "@/components/ui/CoolIcon"
 import { useAuth } from "@/data/useAuth"
-import { supabase } from "@/lib/supabase"
 
-type Severity = "low" | "medium" | "high" | "critical"
-type Category = "data" | "ui" | "performance" | "login" | "other"
+type Severity = "low" | "medium" | "high" | "critical" | ""
+type Category = "data" | "ui" | "performance" | "login" | "other" | ""
 
 interface BugForm {
   title: string
@@ -21,18 +20,18 @@ const initialForm: BugForm = {
   description: "",
   steps: "",
   expected: "",
-  severity: "medium",
-  category: "other",
+  severity: "",
+  category: "",
 }
 
-const severityOptions: { value: Severity; label: string; color: string }[] = [
+const severityOptions: { value: Exclude<Severity, "">; label: string; color: string }[] = [
   { value: "low", label: "Low", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" },
   { value: "medium", label: "Medium", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300" },
   { value: "high", label: "High", color: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300" },
   { value: "critical", label: "Critical", color: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300" },
 ]
 
-const categoryOptions: { value: Category; label: string }[] = [
+const categoryOptions: { value: Exclude<Category, "">; label: string }[] = [
   { value: "data", label: "Data / Reports" },
   { value: "ui", label: "User Interface" },
   { value: "performance", label: "Performance" },
@@ -40,48 +39,56 @@ const categoryOptions: { value: Category; label: string }[] = [
   { value: "other", label: "Other" },
 ]
 
+const RECIPIENT = "dvandiest@brightstarschools.org"
+
+function buildEmailBody(form: BugForm, email: string | undefined) {
+  const lines: string[] = []
+
+  if (form.title) lines.push(`Title: ${form.title}`)
+  if (form.category) {
+    const cat = categoryOptions.find((o) => o.value === form.category)
+    lines.push(`Category: ${cat?.label ?? form.category}`)
+  }
+  if (form.severity) {
+    lines.push(`Severity: ${form.severity.charAt(0).toUpperCase() + form.severity.slice(1)}`)
+  }
+  if (form.description) {
+    lines.push("", "Description:", form.description)
+  }
+  if (form.steps) {
+    lines.push("", "Steps to Reproduce:", form.steps)
+  }
+  if (form.expected) {
+    lines.push("", "Expected Behavior:", form.expected)
+  }
+  if (email) {
+    lines.push("", `Reported by: ${email}`)
+  }
+
+  return lines.join("\n")
+}
+
 export function BugReport() {
   const { user } = useAuth()
   const [form, setForm] = useState<BugForm>(initialForm)
-  const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState("")
 
   function update<K extends keyof BugForm>(key: K, value: BugForm[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError("")
 
-    if (!form.title.trim() || !form.description.trim()) {
-      setError("Title and description are required.")
-      return
-    }
+    const subject = form.title
+      ? `[VAMS Bug] ${form.title}`
+      : "[VAMS Bug Report]"
+    const body = buildEmailBody(form, user?.email)
 
-    setSubmitting(true)
-    try {
-      const { error: dbError } = await supabase.from("bug_reports").insert({
-        title: form.title.trim(),
-        description: form.description.trim(),
-        steps_to_reproduce: form.steps.trim() || null,
-        expected_behavior: form.expected.trim() || null,
-        severity: form.severity,
-        category: form.category,
-        reporter_email: user?.email ?? null,
-      })
+    window.location.href = `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 
-      if (dbError) throw dbError
-
-      setSubmitted(true)
-      setForm(initialForm)
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to submit bug report."
-      setError(message)
-    } finally {
-      setSubmitting(false)
-    }
+    setSubmitted(true)
+    setForm(initialForm)
   }
 
   if (submitted) {
@@ -90,9 +97,9 @@ export function BugReport() {
         <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
           <CoolIcon name="check" size={32} className="text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h2 className="text-xl font-bold text-heading font-heading">Bug Report Submitted</h2>
+        <h2 className="text-xl font-bold text-heading font-heading">Bug Report Ready</h2>
         <p className="mt-2 text-sm text-secondary">
-          Thank you for helping improve VAMS. We&rsquo;ll look into this as soon as possible.
+          Your email client should have opened with the report. Send the email to complete your submission.
         </p>
         <button
           onClick={() => setSubmitted(false)}
@@ -112,7 +119,7 @@ export function BugReport() {
           Report a Bug
         </h2>
         <p className="mt-1 text-xs sm:text-sm text-secondary">
-          Found something that isn&rsquo;t working right? Let us know so we can fix it.
+          Found something that isn&rsquo;t working right? Let us know so we can fix it. All fields are optional.
         </p>
       </div>
 
@@ -125,7 +132,7 @@ export function BugReport() {
             {/* Title */}
             <div>
               <label htmlFor="bug-title" className="mb-1 block text-xs font-medium text-heading">
-                Title <span className="text-coral">*</span>
+                Title
               </label>
               <input
                 id="bug-title"
@@ -149,6 +156,7 @@ export function BugReport() {
                   onChange={(e) => update("category", e.target.value as Category)}
                   className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-heading focus:border-navy focus:outline-none focus:ring-1 focus:ring-navy"
                 >
+                  <option value="">Select a category...</option>
                   {categoryOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
@@ -164,7 +172,7 @@ export function BugReport() {
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => update("severity", opt.value)}
+                      onClick={() => update("severity", form.severity === opt.value ? "" : opt.value)}
                       className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                         form.severity === opt.value
                           ? opt.color + " ring-2 ring-navy/30"
@@ -181,7 +189,7 @@ export function BugReport() {
             {/* Description */}
             <div>
               <label htmlFor="bug-description" className="mb-1 block text-xs font-medium text-heading">
-                Description <span className="text-coral">*</span>
+                Description
               </label>
               <textarea
                 id="bug-description"
@@ -230,20 +238,12 @@ export function BugReport() {
               </p>
             )}
 
-            {/* Error message */}
-            {error && (
-              <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                {error}
-              </div>
-            )}
-
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full rounded-md bg-navy px-4 py-2.5 text-sm font-medium text-white transition hover:bg-navy/90 disabled:opacity-50 sm:w-auto"
+              className="w-full rounded-md bg-navy px-4 py-2.5 text-sm font-medium text-white transition hover:bg-navy/90 sm:w-auto"
             >
-              {submitting ? "Submitting..." : "Submit Bug Report"}
+              Submit Bug Report
             </button>
           </form>
         </CardContent>
