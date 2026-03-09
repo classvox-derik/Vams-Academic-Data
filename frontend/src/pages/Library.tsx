@@ -44,7 +44,7 @@ function AnalysisCard({
               {formatName(analysis.student_name)}
             </h3>
             <p className="text-xs text-muted mt-0.5">
-              Grade {analysis.grade_level} &middot; {formatDate(analysis.saved_at)} &middot; {analysis.model}
+              Grade {analysis.grade_level} &middot; {formatDate(analysis.saved_at)}
             </p>
           </div>
           <CoolIcon

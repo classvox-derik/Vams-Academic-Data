@@ -8,7 +8,6 @@ export interface SavedAnalysis {
   student_id: string
   grade_level: string
   analysis_text: string
-  model: string
   saved_at: string
 }
 
@@ -62,7 +61,6 @@ export function useLibrary(): UseLibraryReturn {
           student_id: data.student_id,
           grade_level: data.grade_level,
           analysis_text: data.analysis_text,
-          model: data.model,
         })
         if (error) throw error
         await fetchAnalyses()

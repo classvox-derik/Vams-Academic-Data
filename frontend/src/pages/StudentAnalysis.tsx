@@ -202,7 +202,6 @@ export function StudentAnalysis() {
                       student_id: profile.studentId,
                       grade_level: profile.gradeLevel,
                       analysis_text: result.analysis,
-                      model: result.model,
                     })
                     setSaved(true)
                   }}
