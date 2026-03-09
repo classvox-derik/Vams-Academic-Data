@@ -15,6 +15,7 @@ import { GPAs } from "@/pages/GPAs"
 import { Interventions } from "@/pages/Interventions"
 import { StudentAnalysis } from "@/pages/StudentAnalysis"
 import { Library } from "@/pages/Library"
+import { BugReport } from "@/pages/BugReport"
 
 function App() {
   const { data, loading } = useDataLoader()
@@ -39,6 +40,7 @@ function App() {
                 <Route path="gpas" element={<GPAs />} />
                 <Route path="interventions" element={<Interventions />} />
                 <Route path="library" element={<Library />} />
+                <Route path="bug-report" element={<BugReport />} />
               </Route>
             </Route>
           </Routes>
